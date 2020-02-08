@@ -1,5 +1,5 @@
 import io
-import os
+# import os
 import sys
 import tweepy
 import keys
@@ -30,7 +30,7 @@ for tweet in tweepy.Cursor(api.search, q=sys.argv[1]).items(10):
     try:
         # print(tweet._json['entities']['media'][0]['media_url_https'])
         imageUrl = str(tweet._json['entities']['media'][0]['media_url_https'])
-    except(tweepy.TweepError):
+    except(tweepy.TweepError, KeyError):
         pass
 
 print(imageUrl)
