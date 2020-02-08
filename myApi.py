@@ -30,7 +30,7 @@ for tweet in tweepy.Cursor(api.search, q=sys.argv[1]).items(10):
     try:
         # print(tweet._json['entities']['media'][0]['media_url_https'])
         imageUrl = str(tweet._json['entities']['media'][0]['media_url_https'])
-    except:
+    except(tweepy.TweepError):
         pass
 
 print(imageUrl)
@@ -40,7 +40,7 @@ fileName = "imageFile.jpg"
 # Save the image at the URL to a file
 try:
     urllib.request.urlretrieve(imageUrl, fileName)
-except:
+except(ValueError):
     print("Unable to find an image associated with the terms requested.")
     sys.exit(0)
 
