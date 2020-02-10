@@ -1,4 +1,4 @@
-from tweepVisionApi import *
+from tweepVisionApi import searchAndAnalyzeImage
 import sys
 
 def main():

@@ -3,6 +3,7 @@ import tweepy
 import keys
 import urllib.request
 import json
+import sys
 
 # Imports the Google Cloud client library
 from google.cloud import vision
