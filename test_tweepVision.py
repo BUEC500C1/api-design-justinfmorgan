@@ -1,4 +1,5 @@
-from tweepVisionApi import visionAnalysis, searchTwitter, searchAndAnalyzeImage
+from tweepVisionApi import visionAnalysis
+#, searchTwitter, searchAndAnalyzeImage
 from main import main
 
 def test_apiUnitTest():
