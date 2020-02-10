@@ -22,11 +22,15 @@ def searchTwitter(searchTerm):
     #####Getting the image URL from Tweepy#####
     imageUrl = ''
     fileName = "imageFile.jpg"
+    tweetText = ''
+    tweetUrl = ''
 
     for tweet in tweepy.Cursor(api.search, q=searchTerm).items(10):
         try:
-            # print(tweet._json['entities']['media'][0]['media_url_https'])
+            # Grabbing the imageUrl, tweetText, and the tweetUrl from the tweepy JSON generated
             imageUrl = str(tweet._json['entities']['media'][0]['media_url_https'])
+            tweetText = str(tweet._json['entities']['text'])
+            tweetUrl = str(tweet._json['entities']['media'][0]['url'])
         except(tweepy.TweepError, KeyError):
             pass
 
@@ -39,37 +43,61 @@ def searchTwitter(searchTerm):
         print("Unable to find an image associated with the terms requested.")
         sys.exit(1)
 
-    return (imageUrl, fileName)
+    return (imageUrl, fileName, tweetText, tweetUrl)
 
-#### Analyzes an image file and outputs the labels to a JSON
+#### Analyzes an image file and outputs the labels to a list
 def visionAnalysis(fileName):
     #####Vision Instantiations#######
     try:
         # Instantiates a Google vision client
         client = vision.ImageAnnotatorClient()
-
-        # Loads the image into memory
-        with io.open(fileName, 'rb') as image_file:
-            content = image_file.read()
-
-        image = types.Image(content=content)
-
-        # Performs label detection on the image file
-        response = client.label_detection(image=image)
-        labels = response.label_annotations
-
-        #Prints out the descriptions for the image
-        print('Labels:')
-        for label in labels:
-            print(label.description)
     except(DefaultCredentialsError):
         print("Invalid Google Cloud Credentials! Export your credentials!")
         sys.exit(1)
-    return None
+
+    try:
+        # Loads the image into memory
+        with io.open(fileName, 'rb') as image_file:
+            content = image_file.read()
+    except(FileNotFoundError):
+        print("Unable to find the file you're trying to analyze!")
+        sys.exit(1)
+
+    image = types.Image(content=content)
+
+    # Performs label detection on the image file
+    response = client.label_detection(image=image)
+    labels = response.label_annotations
+
+    #Prints out the descriptions for the image and also returns the list
+    print('Labels:')
+    for label in labels:
+        print(label.description)
+    return labels
 
 def searchAndAnalyzeImage(keywords):
+    # Search for the keywords
     imageTuple = searchTwitter(keywords)
-    visionAnalysis(imageTuple[1])
+
+    # Store the vision labels from the image analysis in a list
+    labelList = visionAnalysis(imageTuple[1])
+
+    # Iterate through said labels and output them as a JSON
+    x = {
+        "search string" : keywords,
+        "image url" : imageTuple[0],
+        "tweet text" : imageTuple[2],
+        "tweet url" : imageTuple[3]
+    }
+
+    # List of all the label descriptions
+    descriptionList = []
+    for label in labelList:
+        descriptionList.append(label.description)
+
+    x['labels'] = descriptionList
+
+    return json.dumps(x)
 
 def main():
     #CHECK ARGUMENTS!
@@ -77,7 +105,8 @@ def main():
         print("Please provide a search term argument in quotes")
         sys.exit(1)
     else:
-        searchAndAnalyzeImage(sys.argv[1])
+        jsonOutput = searchAndAnalyzeImage(sys.argv[1])
+        print(jsonOutput)
 
 if __name__ == "__main__":
     main()
