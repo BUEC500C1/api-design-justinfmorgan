@@ -18,7 +18,6 @@ auth.set_access_token(keys.access_token, keys.access_token_secret)
 api = tweepy.API(auth)
 
 ### Use Tweepy to search twitter for the first image with a tweet related to the search term
-### Outputs a list of dictionaries of tweets with the image url, tweet text, and tweet url
 def searchTwitter(searchTerm):
     #####Getting the image URL from Tweepy#####
     imageUrl = ''
