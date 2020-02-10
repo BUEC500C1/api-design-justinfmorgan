@@ -1,6 +1,4 @@
 import io
-# import os
-import sys
 import tweepy
 import keys
 import urllib.request
@@ -21,7 +19,7 @@ api = tweepy.API(auth)
 def searchTwitter(searchTerm):
     #####Getting the image URL from Tweepy#####
     imageUrl = ''
-    fileName = "imageFile.jpg"
+    fileName = "resources/imageFile.jpg"
     tweetText = ''
     tweetUrl = ''
 
@@ -92,15 +90,3 @@ def searchAndAnalyzeImage(keywords):
     x['labels'] = descriptionList
 
     return json.dumps(x)
-
-def main():
-    #CHECK ARGUMENTS!
-    if(len(sys.argv) < 2):
-        print("Please provide a search term argument in quotes")
-        sys.exit(1)
-    else:
-        jsonOutput = searchAndAnalyzeImage(sys.argv[1])
-        print(jsonOutput)
-
-if __name__ == "__main__":
-    main()
