@@ -18,6 +18,7 @@ auth.set_access_token(keys.access_token, keys.access_token_secret)
 api = tweepy.API(auth)
 
 ### Use Tweepy to search twitter for the first image with a tweet related to the search term
+### Outputs a list of dictionaries of tweets with the image url, tweet text, and tweet url
 def searchTwitter(searchTerm):
     #####Getting the image URL from Tweepy#####
     imageUrl = ''
@@ -25,16 +26,14 @@ def searchTwitter(searchTerm):
     tweetText = ''
     tweetUrl = ''
 
-    for tweet in tweepy.Cursor(api.search, q=searchTerm).items(10):
+    for tweet in tweepy.Cursor(api.search, q=searchTerm).items(50):
         try:
             # Grabbing the imageUrl, tweetText, and the tweetUrl from the tweepy JSON generated
             imageUrl = str(tweet._json['entities']['media'][0]['media_url_https'])
-            tweetText = str(tweet._json['entities']['text'])
+            tweetText = str(tweet._json['text'])
             tweetUrl = str(tweet._json['entities']['media'][0]['url'])
         except(tweepy.TweepError, KeyError):
             pass
-
-    print(imageUrl)
 
     # Save the image at the URL to a file
     try:
@@ -69,10 +68,6 @@ def visionAnalysis(fileName):
     response = client.label_detection(image=image)
     labels = response.label_annotations
 
-    #Prints out the descriptions for the image and also returns the list
-    print('Labels:')
-    for label in labels:
-        print(label.description)
     return labels
 
 def searchAndAnalyzeImage(keywords):
