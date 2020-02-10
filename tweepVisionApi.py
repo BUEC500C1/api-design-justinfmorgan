@@ -3,7 +3,6 @@ import tweepy
 import keys
 import urllib.request
 import json
-import sys
 
 # Imports the Google Cloud client library
 from google.cloud import vision
@@ -38,7 +37,7 @@ def searchTwitter(searchTerm):
         urllib.request.urlretrieve(imageUrl, fileName)
     except(ValueError):
         print("Unable to find an image associated with the terms requested.")
-        sys.exit(1)
+        return -1
 
     return (imageUrl, fileName, tweetText, tweetUrl)
 
@@ -50,7 +49,7 @@ def visionAnalysis(fileName):
         client = vision.ImageAnnotatorClient()
     except(DefaultCredentialsError):
         print("Invalid Google Cloud Credentials! Export your credentials!")
-        sys.exit(1)
+        return -1
 
     try:
         # Loads the image into memory
@@ -58,7 +57,7 @@ def visionAnalysis(fileName):
             content = image_file.read()
     except(FileNotFoundError):
         print("Unable to find the file you're trying to analyze!")
-        sys.exit(1)
+        return -1
 
     image = types.Image(content=content)
 
@@ -72,8 +71,16 @@ def searchAndAnalyzeImage(keywords):
     # Search for the keywords
     imageTuple = searchTwitter(keywords)
 
-    # Store the vision labels from the image analysis in a list
-    labelList = visionAnalysis(imageTuple[1])
+    if(imageTuple == -1):
+        print("Unable to find a tweet matching the search")
+        return -1
+
+    try:
+        # Store the vision labels from the image analysis in a list
+        labelList = visionAnalysis(imageTuple[1])
+    except(TypeError):
+        print("Something went wrong with vision analysis!")
+        return -1
 
     # Iterate through said labels and output them as a JSON
     x = {
