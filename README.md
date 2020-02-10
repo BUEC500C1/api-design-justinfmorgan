@@ -5,9 +5,14 @@ The API design is fairly simple. Simply run the python program via "python main.
 
 # Here's a photo of main.py in action:
 <p align="center">
-<img src="./resources/mainExample.png" width="55%" />
+<img src="./resources/mainExample.png" width="90%" />
 </p>
 
 # API Information
 The tweepyVisionApi.py file contains the following functions:
 
+searchTwitter(searchTerm): A function that uses Tweepy in order to search twitter for the first image with a tweet related to the search term (search term can be an int, string, float... but if special characters are inputted then quotes are required to force the input to be a string). The function returns a 4-value tuple (quartle?) that contains the image URL, the file name where the image is stored, the tweet text, and the tweet URl.
+
+visionAnalysis(fileName): A function that uses the Google Vision API to analyze its input (an image file name) and outputs a list of label objects.
+
+searchAndAnalyzeImage(keywords): A function that combines the two functions above, taking in a search term and outputting a JSON object containing all of the above information, and storing the labels in a list within the JSON.
