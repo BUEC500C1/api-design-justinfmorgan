@@ -3,4 +3,4 @@ google-auth==1.11.0
 google-cloud-vision==0.42.0
 googleapis-common-protos==1.51.0
 tweepy==3.8.0
-urllib3==1.25.8
+urllib3==1.26.5
